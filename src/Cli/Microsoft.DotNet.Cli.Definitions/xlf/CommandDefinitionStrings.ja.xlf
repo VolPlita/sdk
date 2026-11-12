@@ -762,6 +762,20 @@ Examples:
         <target state="translated">値は正の整数である必要があります。</target>
         <note />
       </trans-unit>
+      <trans-unit id="CmdTestShowStderrDescription">
+        <source>Determines when to show captured error output of a test.
+Valid values are 'All', 'Failed', 'None'. Default is 'Failed'.</source>
+        <target state="new">Determines when to show captured error output of a test.
+Valid values are 'All', 'Failed', 'None'. Default is 'Failed'.</target>
+        <note>{Locked="All"}{Locked="Failed"}{Locked="None"}</note>
+      </trans-unit>
+      <trans-unit id="CmdTestShowStdoutDescription">
+        <source>Determines when to show captured standard output of a test.
+Valid values are 'All', 'Failed', 'None'. Default is 'Failed'.</source>
+        <target state="new">Determines when to show captured standard output of a test.
+Valid values are 'All', 'Failed', 'None'. Default is 'Failed'.</target>
+        <note>{Locked="All"}{Locked="Failed"}{Locked="None"}</note>
+      </trans-unit>
       <trans-unit id="CmdTimeoutDescription">
         <source>Stops test execution when the specified test execution time is reached across all test applications. Pass after '--' to apply per test application.</source>
         <target state="translated">すべてのテスト アプリケーションで、指定したテスト実行時間に達すると、テストの実行を停止します。テスト アプリケーションごとに適用するには、'--' の後に渡します。</target>
@@ -1735,6 +1749,11 @@ The default is to publish a framework-dependent application.</source>
         <target state="translated">PROJECT_PATH</target>
         <note />
       </trans-unit>
+      <trans-unit id="ReferenceCommandDescription">
+        <source>Add, remove, or list ProjectReferences for a .NET project.</source>
+        <target state="new">Add, remove, or list ProjectReferences for a .NET project.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ReferenceListAppFullName">
         <source>List all project-to-project references of the project.</source>
         <target state="translated">プロジェクトのすべてのプロジェクト間参照をリストします。</target>
@@ -1885,6 +1904,11 @@ The default is 'false.' However, when targeting .NET 7 or lower, the default is 
       <trans-unit id="SolutionArgumentName">
         <source>SLN_FILE</source>
         <target state="translated">SLN_FILE</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SolutionListFormatOptionDescription">
+        <source>The output format for the list of paths. JSON output is an array of paths.</source>
+        <target state="new">The output format for the list of paths. JSON output is an array of paths.</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionOrProjectArgumentDescription">
@@ -2148,8 +2172,8 @@ The default is 'false.' However, when targeting .NET 7 or lower, the default is 
         <note />
       </trans-unit>
       <trans-unit id="ToolSearchCommandDescription">
-        <source>Search dotnet tools in nuget.org</source>
-        <target state="translated">nuget.org で dotnet ツールを検索します</target>
+        <source>Search dotnet tools in the configured NuGet package source(s). If no source is specified, all enabled sources in the NuGet configuration are searched.</source>
+        <target state="needs-review-translation">nuget.org で dotnet ツールを検索します</target>
         <note />
       </trans-unit>
       <trans-unit id="ToolSearchPrereleaseDescription">

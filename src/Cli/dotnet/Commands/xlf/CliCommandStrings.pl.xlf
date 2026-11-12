@@ -971,6 +971,11 @@ See https://aka.ms/dotnet-test/mtp for more information.</target>
         <target state="new">Lists packages that have known vulnerabilities. Cannot be combined with '--deprecated' or '--outdated' options.</target>
         <note />
       </trans-unit>
+      <trans-unit id="CodeCoverageSummary">
+        <source>Code Coverage Summary:</source>
+        <target state="new">Code Coverage Summary:</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Command">
         <source>Command</source>
         <target state="new">Command</target>
@@ -1110,6 +1115,81 @@ See https://aka.ms/dotnet-test/mtp for more information.</target>
         <source>Couldn't find a project. Ensure that a project exists in {0}, or pass the path to the project using {1}.</source>
         <target state="new">Couldn't find a project. Ensure that a project exists in {0}, or pass the path to the project using {1}.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="CoverageMergedArtifact">
+        <source>Merged coverage ({0})</source>
+        <target state="new">Merged coverage ({0})</target>
+        <note>{0} is an artifact path. Used instead of Total when the merged artifact does not represent every test application.</note>
+      </trans-unit>
+      <trans-unit id="CoverageMetricBlock">
+        <source>Block</source>
+        <target state="new">Block</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CoverageMetricBranch">
+        <source>Branch</source>
+        <target state="new">Branch</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CoverageMetricClass">
+        <source>Class</source>
+        <target state="new">Class</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CoverageMetricComplexity">
+        <source>Complexity</source>
+        <target state="new">Complexity</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CoverageMetricCondition">
+        <source>Condition</source>
+        <target state="new">Condition</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CoverageMetricFunction">
+        <source>Function</source>
+        <target state="new">Function</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CoverageMetricInstruction">
+        <source>Instruction</source>
+        <target state="new">Instruction</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CoverageMetricLine">
+        <source>Line</source>
+        <target state="new">Line</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CoverageMetricMethod">
+        <source>Method</source>
+        <target state="new">Method</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CoverageMetricRegion">
+        <source>Region</source>
+        <target state="new">Region</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CoverageMetricStatement">
+        <source>Statement</source>
+        <target state="new">Statement</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CoverageMetricWithProducer">
+        <source>{0} ({1})</source>
+        <target state="new">{0} ({1})</target>
+        <note>{0} is the coverage metric label. {1} identifies its producer when several producers report the same metric.</note>
+      </trans-unit>
+      <trans-unit id="CoverageNoData">
+        <source>no coverable data</source>
+        <target state="new">no coverable data</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CoverageScopeOverall">
+        <source>Total</source>
+        <target state="new">Total</target>
+        <note>Labels coverage of a single test application or a complete merged coverage artifact, never a sum of application percentages.</note>
       </trans-unit>
       <trans-unit id="CrashDumpTypeArgumentName">
         <source>DUMP_TYPE</source>
@@ -1730,6 +1810,11 @@ See https://aka.ms/dotnet-test/mtp for more information.</target>
       <trans-unit id="InternalLoopAsyncDidNotExitSuccessfullyErrorMessage">
         <source>Method '{0}' did not exit successfully</source>
         <target state="new">Method '{0}' did not exit successfully</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidCoverageSummary">
+        <source>A test application reported an invalid code coverage summary. The invalid summary was ignored.</source>
+        <target state="new">A test application reported an invalid code coverage summary. The invalid summary was ignored.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidFilePath">
@@ -3045,6 +3130,11 @@ Your project targets multiple frameworks. Specify which framework to run using '
         <target state="new">Path to &lt;application&gt;.runtimeconfig.json file.</target>
         <note />
       </trans-unit>
+      <trans-unit id="RuntimeFramework">
+        <source>runtime: {0}</source>
+        <target state="new">runtime: {0}</target>
+        <note>Additional runtime information after the test assembly's target framework and process architecture. {0} is a compact runtime moniker such as net481 or net9.0.</note>
+      </trans-unit>
       <trans-unit id="RuntimePropertyNotFound">
         <source>Runtime property 'HOSTFXR_PATH' was not set or empty.</source>
         <target state="new">Runtime property 'HOSTFXR_PATH' was not set or empty.</target>
@@ -3616,11 +3706,6 @@ Tool '{1}' (version '{2}') was successfully installed.</target>
         <target state="new">PATH</target>
         <note />
       </trans-unit>
-      <trans-unit id="ToolInstallNuGetConfigurationFileDoesNotExist">
-        <source>NuGet configuration file '{0}' does not exist.</source>
-        <target state="new">NuGet configuration file '{0}' does not exist.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ToolInstallPackageIdMissing">
         <source>A package ID was not specified for tool installation.</source>
         <target state="new">A package ID was not specified for tool installation.</target>
@@ -3758,6 +3843,11 @@ Tool '{1}' (version '{2}') was successfully installed.</target>
         <target state="new">Search dotnet tools in nuget.org</target>
         <note />
       </trans-unit>
+      <trans-unit id="ToolSearchNoSourcesConfigured">
+        <source>No NuGet package sources are configured or enabled.</source>
+        <target state="new">No NuGet package sources are configured or enabled.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ToolSearchPrereleaseDescription">
         <source>Include pre-release packages.</source>
         <target state="new">Include pre-release packages.</target>
@@ -3781,6 +3871,11 @@ Tool '{1}' (version '{2}') was successfully installed.</target>
       <trans-unit id="ToolSearchSkipDescription">
         <source>The number of results to skip, for pagination.</source>
         <target state="new">The number of results to skip, for pagination.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolSearchSourceDoesNotSupportPackageTypeFiltering">
+        <source>The source '{0}' does not support searching by package type and cannot be used for .NET tool search.</source>
+        <target state="new">The source '{0}' does not support searching by package type and cannot be used for .NET tool search.</target>
         <note />
       </trans-unit>
       <trans-unit id="ToolSearchTakeArgumentName">
@@ -3916,6 +4011,11 @@ and the corresponding package Ids for installed tools using the command
       <trans-unit id="UnknownSessionEventType">
         <source>Received an unknown session event type '{0}' from Microsoft.Testing.Platform.</source>
         <target state="new">Received an unknown session event type '{0}' from Microsoft.Testing.Platform.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnnegotiatedCoverageSummary">
+        <source>A test application reported a code coverage summary without negotiating coverage summary support. The summary was ignored.</source>
+        <target state="new">A test application reported a code coverage summary without negotiating coverage summary support. The summary was ignored.</target>
         <note />
       </trans-unit>
       <trans-unit id="UpdateAllOptionDescription">

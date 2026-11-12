@@ -395,9 +395,10 @@ internal sealed class HotReloadDotNetWatcher
                                 {
                                     fileWatcher.WatchFiles(projectGraph.BuildFiles);
 
-                                    evaluationResult = await TryEvaluateProjectGraphAsync(projectGraph, targetFramework, restore: true, iterationCancellationToken);
-                                    if (evaluationResult != null)
+                                    var newEvaluationResult = await TryEvaluateProjectGraphAsync(projectGraph, targetFramework, restore: true, iterationCancellationToken);
+                                    if (newEvaluationResult != null)
                                     {
+                                        evaluationResult = newEvaluationResult;
                                         break;
                                     }
                                 }
@@ -1226,7 +1227,7 @@ internal sealed class HotReloadDotNetWatcher
             }
             else if (projectPaths is not [])
             {
-                var solutionFile = Path.Combine(Path.GetTempFileName() + ".slnx");
+                using var solutionFile = _context.TemporaryFileManager.Create(".slnx", FileShare.Read);
                 var solutionElement = new XElement("Solution");
 
                 foreach (var projectPath in projectPaths)
@@ -1235,25 +1236,13 @@ internal sealed class HotReloadDotNetWatcher
                 }
 
                 var doc = new XDocument(solutionElement);
-                doc.Save(solutionFile);
+                doc.Save(solutionFile.Stream);
+                // MSBuild opens the file with FileShare.Read, which does not allow an existing writer on Windows.
+                solutionFile.Stream.Dispose();
 
-                try
+                if (!await BuildFileOrProjectOrSolutionAsync(solutionFile.Stream.Name, targetFramework, device, action, cancellationToken))
                 {
-                    if (!await BuildFileOrProjectOrSolutionAsync(solutionFile, targetFramework, device, action, cancellationToken))
-                    {
-                        return false;
-                    }
-                }
-                finally
-                {
-                    try
-                    {
-                        File.Delete(solutionFile);
-                    }
-                    catch
-                    {
-                        // ignore
-                    }
+                    return false;
                 }
             }
 

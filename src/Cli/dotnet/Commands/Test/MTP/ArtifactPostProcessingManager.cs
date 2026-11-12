@@ -39,22 +39,23 @@ internal sealed class ArtifactPostProcessingManager(bool enabled = true, Cancell
             .Select(extension => extension.ToLowerInvariant())
             .ToArray();
 
-        if (kinds.Length == 0
-            && extensions.Length == 0
-            && truncatedRunKinds.Length == 0
-            && truncatedRunExtensions.Length == 0)
-        {
-            return;
-        }
-
         lock (_lock)
         {
             if (!_applications.TryGetValue(module, out ApplicationState? application))
             {
+                if (kinds.Length == 0
+                    && extensions.Length == 0
+                    && truncatedRunKinds.Length == 0
+                    && truncatedRunExtensions.Length == 0)
+                {
+                    return;
+                }
+
                 application = new ApplicationState(module, targetFramework, architecture);
                 _applications.Add(module, application);
             }
 
+            application.TargetFramework ??= targetFramework;
             application.SupportedKinds.UnionWith(kinds);
             application.RequiredKinds.UnionWith(requiredKinds);
             application.SupportedExtensions.UnionWith(extensions);
@@ -85,7 +86,8 @@ internal sealed class ArtifactPostProcessingManager(bool enabled = true, Cancell
                 targetFramework,
                 architecture,
                 executionId,
-                artifact.InputArtifactPaths));
+                artifact.InputArtifactPaths,
+                artifact.CoverageSummary));
         }
     }
 
@@ -222,7 +224,9 @@ internal sealed class ArtifactPostProcessingManager(bool enabled = true, Cancell
                 string? failureMessage = invocation.FailureMessage;
                 if (ShouldApplyOutputs(failureMessage, exitCode))
                 {
-                    ApplyOutputs(output, job, invocation.SnapshotOutputs());
+                    ApplyOutputs(
+                        output, job, invocation.SnapshotOutputs(),
+                        allowCoverageSummary: cancellationReason == TestRunCancellationReason.None && !ctrlC.Token.IsCancellationRequested);
                 }
                 else if (failureMessage is not null)
                 {
@@ -442,7 +446,8 @@ internal sealed class ArtifactPostProcessingManager(bool enabled = true, Cancell
     internal static void ApplyOutputs(
         TerminalTestReporter output,
         ArtifactPostProcessingJob job,
-        IReadOnlyList<ArtifactPostProcessingArtifact> processedArtifacts)
+        IReadOnlyList<ArtifactPostProcessingArtifact> processedArtifacts,
+        bool allowCoverageSummary = true)
     {
         HashSet<string>? jobInputPaths = null;
         foreach (ArtifactPostProcessingArtifact processedArtifact in processedArtifacts)
@@ -486,13 +491,34 @@ internal sealed class ArtifactPostProcessingManager(bool enabled = true, Cancell
                 processedArtifact.ExecutionId,
                 testName: null,
                 processedArtifact.Path);
+
+            if (allowCoverageSummary && processedArtifact.CoverageSummary is { Length: > 0 } coverageSummary)
+            {
+                ArtifactPostProcessingGroup[] representedGroups =
+                [
+                    .. job.Groups.Where(group =>
+                        (group.IsKind && string.Equals(group.Key, processedArtifact.Kind, StringComparison.Ordinal))
+                        || group.Artifacts.Any(artifact => consumedPaths.Contains(artifact.Path))),
+                ];
+                // Summary metadata is authoritative only with complete, explicit provenance. Legacy
+                // kind/extension inference remains sufficient for listing artifacts, not for a total.
+                bool complete = processedArtifact.InputArtifactPaths is { Count: > 0 } inputPaths
+                    && inputPaths.All(jobInputPaths!.Contains)
+                    && representedGroups.Length > 0
+                    && representedGroups.SelectMany(group => group.Artifacts).All(artifact => consumedPaths.Contains(artifact.Path));
+                output.MergedCoverageSummaryAdded(
+                    processedArtifact.Path,
+                    consumedPaths,
+                    complete,
+                    coverageSummary);
+            }
         }
     }
 
     private sealed class ApplicationState(TestModule module, string? targetFramework, string? architecture)
     {
         public TestModule Module { get; } = module;
-        public string? TargetFramework { get; } = targetFramework;
+        public string? TargetFramework { get; set; } = targetFramework;
         public string? Architecture { get; } = architecture;
         public string ProducingTestModule { get; set; } = module.TargetPath;
         public HashSet<string> SupportedKinds { get; } = new(StringComparer.Ordinal);
@@ -546,7 +572,8 @@ internal sealed class ArtifactPostProcessingInvocation(string manifestPath)
                 targetFramework,
                 architecture,
                 executionId,
-                artifact.InputArtifactPaths));
+                artifact.InputArtifactPaths,
+                artifact.CoverageSummary));
         }
     }
 

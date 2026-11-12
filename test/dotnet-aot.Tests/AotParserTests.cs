@@ -14,8 +14,8 @@ namespace Microsoft.DotNet.Cli.Tests;
 
 /// <summary>
 ///  Tests for the AOT-compiled CLI parser (the #if CLI_AOT path in Parser.cs).
-///  Validates that --version, --info, --help, default usage, and build-free test-module
-///  orchestration are served entirely
+///  Validates that --version, --info, --help, root completion, default usage, and
+///  build-free test-module orchestration are served entirely
 ///  from AOT, that the full command surface now parses (matching the managed CLI),
 ///  and that commands which require the managed CLI report this via
 ///  <see cref="CommandNotAvailableInAotException"/> so the bridge can fall back.
@@ -256,6 +256,21 @@ public partial class AotParserTests
         Assert.IsNull(exception);
     }
 
+    [TestMethod]
+    [DataRow("reference", "Add, remove, or list ProjectReferences for a .NET project.")]
+    [DataRow("reference add", "Add a project-to-project reference to the project.")]
+    [DataRow("reference list", "List all project-to-project references of the project.")]
+    [DataRow("reference remove", "Remove a project-to-project reference from the project.")]
+    public void InvokeReferenceHelp_RendersCommandDescriptionFromAotWithoutFallback(string commandLine, string description)
+    {
+        var (exitCode, stdout, stderr) = InvokeWithCapture([.. commandLine.Split(' '), "--help"]);
+
+        Assert.AreEqual(0, exitCode);
+        stdout.Should().ContainVisuallySameFragmentIfNotLocalized(
+            $"Description:{Environment.NewLine}  {description}");
+        stderr.Should().BeEmpty();
+    }
+
     /// <summary>Verifies that run help renders directly from the Native AOT command tree.</summary>
     [TestMethod]
     public void InvokeRunHelp_RendersFromAotWithoutFallback()
@@ -468,6 +483,46 @@ public partial class AotParserTests
     }
 
     [TestMethod]
+    [DataRow("dotnet bu", 9, new[] { "build", "build-server", "msbuild" })]
+    [DataRow("dotnet --ver", 12, new[] { "--version" })]
+    public void InvokeComplete_RendersCompletionsFromAot(string input, int position, string[] expected)
+    {
+        var (exitCode, stdout, stderr) = InvokeWithCapture([
+            "complete",
+            "--position", position.ToString(),
+            input,
+        ]);
+
+        Assert.AreEqual(0, exitCode);
+        Assert.IsTrue(string.IsNullOrEmpty(stderr));
+        Assert.AreSequenceEqual(
+            expected,
+            stdout.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries));
+    }
+
+    [TestMethod]
+    [DataRow("dotnet new ")]
+    [DataRow("dotnet build --framework ")]
+    [DataRow("dotnet add package ")]
+    [DataRow("new ")]
+    [DataRow("dotnet package update ")]
+    [DataRow("dotnet build --unknown-option ")]
+    public void InvokeComplete_CommandSpecificCompletionsFallBackToManaged(string input)
+    {
+        var result = Parser.Parse(["complete", input]);
+
+        Assert.ThrowsExactly<CommandNotAvailableInAotException>(() => Parser.Invoke(result));
+    }
+
+    [TestMethod]
+    public void InvokeComplete_CommandSpecificCompletionsBeyondInputFallBackToManaged()
+    {
+        var result = Parser.Parse(["complete", "--position", "13", "dotnet build"]);
+
+        Assert.ThrowsExactly<CommandNotAvailableInAotException>(() => Parser.Invoke(result));
+    }
+
+    [TestMethod]
     public void ParseVersionWithExtraArgs_IsHandledGracefully()
     {
         // System.CommandLine may or may not error on extra tokens after --version.
@@ -558,6 +613,35 @@ public partial class AotParserTests
         var (exitCode, _, _) = InvokeWithCapture(commandLine.Split(' '));
 
         Assert.AreEqual(0, exitCode);
+    }
+
+    [TestMethod]
+    public void InvokeAotToolSearchCommand_ExecutesWithoutManagedFallback()
+    {
+        string configPath = Path.Combine(Path.GetTempPath(), $"aot-tool-search-{Guid.NewGuid():N}.config");
+        File.WriteAllText(
+            configPath,
+            """
+            <?xml version="1.0" encoding="utf-8"?>
+            <configuration>
+              <packageSources>
+                <clear />
+              </packageSources>
+            </configuration>
+            """);
+
+        try
+        {
+            var (exitCode, _, stderr) = InvokeWithCapture(
+                ["tool", "search", "mysearchterm", "--configfile", configPath]);
+
+            Assert.AreEqual(1, exitCode);
+            stderr.Should().Contain("No NuGet package sources are configured or enabled.");
+        }
+        finally
+        {
+            File.Delete(configPath);
+        }
     }
 
     [TestMethod]

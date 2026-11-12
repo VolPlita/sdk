@@ -762,6 +762,20 @@ Esempi:
         <target state="translated">Il valore deve essere un numero intero positivo.</target>
         <note />
       </trans-unit>
+      <trans-unit id="CmdTestShowStderrDescription">
+        <source>Determines when to show captured error output of a test.
+Valid values are 'All', 'Failed', 'None'. Default is 'Failed'.</source>
+        <target state="new">Determines when to show captured error output of a test.
+Valid values are 'All', 'Failed', 'None'. Default is 'Failed'.</target>
+        <note>{Locked="All"}{Locked="Failed"}{Locked="None"}</note>
+      </trans-unit>
+      <trans-unit id="CmdTestShowStdoutDescription">
+        <source>Determines when to show captured standard output of a test.
+Valid values are 'All', 'Failed', 'None'. Default is 'Failed'.</source>
+        <target state="new">Determines when to show captured standard output of a test.
+Valid values are 'All', 'Failed', 'None'. Default is 'Failed'.</target>
+        <note>{Locked="All"}{Locked="Failed"}{Locked="None"}</note>
+      </trans-unit>
       <trans-unit id="CmdTimeoutDescription">
         <source>Stops test execution when the specified test execution time is reached across all test applications. Pass after '--' to apply per test application.</source>
         <target state="translated">Arresta l'esecuzione dei test quando viene raggiunto il tempo di esecuzione dei test specificato in tutte le applicazioni di test. Passare dopo '--' per applicare per applicazione di test.</target>
@@ -1735,6 +1749,11 @@ Per impostazione predefinita, viene generato un pacchetto dipendente dal framewo
         <target state="translated">PROJECT_PATH</target>
         <note />
       </trans-unit>
+      <trans-unit id="ReferenceCommandDescription">
+        <source>Add, remove, or list ProjectReferences for a .NET project.</source>
+        <target state="new">Add, remove, or list ProjectReferences for a .NET project.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ReferenceListAppFullName">
         <source>List all project-to-project references of the project.</source>
         <target state="translated">Elenca tutti i riferimenti P2P (da progetto a progetto) del progetto.</target>
@@ -1885,6 +1904,11 @@ Il valore predefinito è 'false'. Tuttavia, quando la destinazione è .NET 7 o u
       <trans-unit id="SolutionArgumentName">
         <source>SLN_FILE</source>
         <target state="translated">SLN_FILE</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SolutionListFormatOptionDescription">
+        <source>The output format for the list of paths. JSON output is an array of paths.</source>
+        <target state="new">The output format for the list of paths. JSON output is an array of paths.</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionOrProjectArgumentDescription">
@@ -2148,8 +2172,8 @@ Il valore predefinito è 'false'. Tuttavia, quando la destinazione è .NET 7 o u
         <note />
       </trans-unit>
       <trans-unit id="ToolSearchCommandDescription">
-        <source>Search dotnet tools in nuget.org</source>
-        <target state="translated">Cerca negli strumenti dotnet in nuget.org</target>
+        <source>Search dotnet tools in the configured NuGet package source(s). If no source is specified, all enabled sources in the NuGet configuration are searched.</source>
+        <target state="needs-review-translation">Cerca negli strumenti dotnet in nuget.org</target>
         <note />
       </trans-unit>
       <trans-unit id="ToolSearchPrereleaseDescription">
